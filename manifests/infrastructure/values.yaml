@@ -1,0 +1,21 @@
+# Default values for infrastructure.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+fusionauth: 
+  database: 
+    host: infrastructure-postgresql
+    user: postgres
+    password: postgres
+    root: 
+      user: postgres
+      password: postgres
+  search: 
+    engine: database 
+  service:
+    type: LoadBalancer 
+
+postgresql:
+  postgresqlPassword: postgres
+  service: 
+    type: LoadBalancer

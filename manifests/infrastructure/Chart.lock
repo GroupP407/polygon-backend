@@ -1,0 +1,9 @@
+dependencies:
+- name: fusionauth
+  repository: https://bbriggs.github.io/charts
+  version: 0.4.2
+- name: postgresql
+  repository: https://charts.bitnami.com/bitnami
+  version: 10.2.0
+digest: sha256:ba5e65adb4f053f65dcf52e0408d8553c9974c54b23e9adf3b759c50da83bee1
+generated: "2021-01-02T18:45:40.1333947+03:00"
