@@ -19,3 +19,12 @@ postgresql:
   postgresqlPassword: postgres
   service: 
     type: LoadBalancer
+
+grafana:
+  service:
+    port: 9080
+    type: LoadBalancer
+  persistence: 
+    enabled: true
+  adminPassword: admin
+    
