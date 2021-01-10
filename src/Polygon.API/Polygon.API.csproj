@@ -6,6 +6,9 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="App.Metrics.AspNetCore.All" Version="4.2.0-preview.0.25" />
+        <PackageReference Include="App.Metrics.AspNetCore.Tracking" Version="4.2.0-preview.0.25" />
+        <PackageReference Include="App.Metrics.Prometheus" Version="4.2.0-preview.0.25" />
         <PackageReference Include="Autofac" Version="6.1.0" />
         <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="7.1.0" />
         <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.0" />
