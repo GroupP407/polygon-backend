@@ -32,3 +32,6 @@ dependencies:
   - name: grafana
     version: 6.1.16
     repository: https://grafana.github.io/helm-charts
+  - name: prometheus
+    version: 13.0.3
+    repository: https://prometheus-community.github.io/helm-charts
