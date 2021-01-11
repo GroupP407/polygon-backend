@@ -19,6 +19,31 @@ postgresql:
   postgresqlPassword: postgres
   service: 
     type: LoadBalancer
+    
+elasticsearch:
+  metrics: 
+    enabled: true
+  kibana: 
+    service: 
+      type: LoadBalancer
+  global: 
+    kibanaEnabled: true
+    
+jaeger:
+  agent: 
+    service: 
+      type: NodePort
+  provisionDataStore: 
+    cassandra: false
+  storage: 
+    type: elasticsearch
+    elasticsearch: 
+      host: infrastructure-elasticsearch-master
+      port: 9200
+      usePassword: false
+  query:
+    service: 
+      type: NodePort
 
 grafana:
   service:
