@@ -29,6 +29,12 @@ dependencies:
   - name: postgresql
     version: 10.2.0
     repository: https://charts.bitnami.com/bitnami
+  - name: elasticsearch
+    version: 13.0.5
+    repository: https://charts.bitnami.com/bitnami
+  - name: jaeger
+    version: 0.39.6
+    repository: https://jaegertracing.github.io/helm-charts
   - name: grafana
     version: 6.1.16
     repository: https://grafana.github.io/helm-charts
