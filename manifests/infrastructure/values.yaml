@@ -57,10 +57,15 @@ prometheus:
   serverFiles: 
     prometheus.yml:
       scrape_configs:
+        - job_name: 'prometheus'
+          static_configs:
+            - targets: [ 'localhost:9090' ]
         - job_name: 'polygon'
           scrape_interval: 5s
           metrics_path: /metrics-text
           static_configs:
             - targets: [ 'host.docker.internal:5000' ]
+        
+        
         
     
