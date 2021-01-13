@@ -43,9 +43,13 @@ jaeger:
       usePassword: false
   query:
     service: 
-      type: NodePort
+      type: LoadBalancer
+      port: 30638
 
 grafana:
+  sidecar:
+    datasources: 
+      enabled: true
   service:
     port: 9080
     type: LoadBalancer
@@ -54,6 +58,12 @@ grafana:
   adminPassword: admin
 
 prometheus: 
+  nodeExporter: 
+    enabled: false
+  pushgateway: 
+    enabled: false
+  alertmanager: 
+    enabled: false
   serverFiles: 
     prometheus.yml:
       scrape_configs:
@@ -61,11 +71,12 @@ prometheus:
           static_configs:
             - targets: [ 'localhost:9090' ]
         - job_name: 'polygon'
-          scrape_interval: 5s
           metrics_path: /metrics-text
           static_configs:
             - targets: [ 'host.docker.internal:5000' ]
-        
-        
-        
-    
+        - job_name: 'elasticsearch'
+          static_configs:
+            - targets: [ 'infrastructure-elasticsearch-metrics:9114' ]
+        - job_name: 'kubernetes'
+          static_configs:
+          - targets: [ 'infrastructure-kube-state-metrics:8080' ]
