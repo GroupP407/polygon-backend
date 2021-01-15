@@ -21,6 +21,9 @@ postgresql:
     type: LoadBalancer
     
 elasticsearch:
+  master: 
+    service:
+      type: LoadBalancer 
   metrics: 
     enabled: true
   kibana: 
