@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Polygon.API", "Polygon.API\Polygon.API.csproj", "{6A76E41E-1F3A-450C-9E46-28F8C84F33C4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Polygon.API", "src\Polygon.API\Polygon.API.csproj", "{6A76E41E-1F3A-450C-9E46-28F8C84F33C4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
