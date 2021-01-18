@@ -4,10 +4,13 @@ on:
 
 jobs:
   test-job:
-    runs-on: ubuntu-16.04
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@main
       - uses: actions/setup-dotnet@v1
-        name: 'setup node'
+        name: 'setup dotnet'
         with:
           dotnet-version: '5.0.x'
+          
+      - name: 'install'
+        run: dotnet buid Polygon
