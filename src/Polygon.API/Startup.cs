@@ -12,6 +12,7 @@ using Microsoft.OpenApi.Models;
 using OpenTelemetry;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
+using Polygon.Infrastructure;
 
 namespace Polygon.API
 {
@@ -22,10 +23,14 @@ namespace Polygon.API
             Configuration = configuration;
         }
 
-        public IConfiguration Configuration { get; }
+        private IConfiguration Configuration { get; }
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<ApplicationContext>(builder =>
+                builder.UseNpgsql(
+                    Configuration.GetConnectionString("Application"),
+                    optionsBuilder => optionsBuilder.MigrationsAssembly("Polygon.Infrastructure")));
             services.AddOpenTelemetryTracing(builder =>
             {
                 builder
@@ -36,7 +41,8 @@ namespace Polygon.API
                     .AddJaegerExporter(options => Configuration.Bind("JaegerExporterOptions", options));
             });
             services.AddAppMetricsCollectors();
-            services.AddControllers();
+            services.AddControllers().AddNewtonsoftJson();
+
             services.AddAutoMapper(Assembly.Load("Polygon.API"));
             services.AddSwaggerGen(c =>
             {

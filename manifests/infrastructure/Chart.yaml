@@ -23,9 +23,6 @@ version: 0.1.0
 appVersion: 1.0.0
 
 dependencies:
-  - name: fusionauth
-    version: 0.4.2
-    repository: https://bbriggs.github.io/charts
   - name: postgresql
     version: 10.2.0
     repository: https://charts.bitnami.com/bitnami

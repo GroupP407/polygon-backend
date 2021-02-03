@@ -1,7 +1,4 @@
 dependencies:
-- name: fusionauth
-  repository: https://bbriggs.github.io/charts
-  version: 0.4.2
 - name: postgresql
   repository: https://charts.bitnami.com/bitnami
   version: 10.2.0
@@ -17,5 +14,5 @@ dependencies:
 - name: prometheus
   repository: https://prometheus-community.github.io/helm-charts
   version: 13.0.3
-digest: sha256:b27af9dce301ba09d8232ff2eeaf467237ac4059b2be159101a382b17c8998c5
-generated: "2021-01-11T12:45:31.3233255+03:00"
+digest: sha256:d30aa61f14a440c2a6d1431487a8e3f9943dc4f2ee6f29ea21a8f3b99ef4345e
+generated: "2021-02-01T22:19:31.0632316+03:00"
