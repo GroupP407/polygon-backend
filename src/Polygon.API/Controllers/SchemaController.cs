@@ -39,8 +39,6 @@ namespace Polygon.API.Controllers
             CancellationToken cancellationToken)
         {
             var formSchema = new FormSchema(DateTimeOffset.Now);
-
-            _logger.LogInformation("test {@FormSchema}", formSchema);
             
             _mapper.Map(request, formSchema);
 
