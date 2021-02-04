@@ -11,7 +11,8 @@ namespace Polygon.Infrastructure
         }
 
         public virtual DbSet<FormSchema> FormSchemas { get; set; }
-
+        public virtual DbSet<FormData> FormDatas { get; set; }
+        
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.Load("Polygon.Infrastructure"));

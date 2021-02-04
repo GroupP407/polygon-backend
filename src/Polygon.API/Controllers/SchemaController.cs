@@ -13,6 +13,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 using NJsonSchema;
 using Polygon.API.Resources;
+using Polygon.API.Services.SchemaService;
 using Polygon.Domain.Entities;
 using Polygon.Infrastructure;
 
@@ -25,12 +26,14 @@ namespace Polygon.API.Controllers
         private readonly ApplicationContext _db;
         private readonly IMapper _mapper;
         private readonly ILogger<SchemaController> _logger;
+        private readonly ISchemaService _schemaService;
 
-        public SchemaController(ApplicationContext db, IMapper mapper, ILogger<SchemaController> logger)
+        public SchemaController(ApplicationContext db, IMapper mapper, ILogger<SchemaController> logger, ISchemaService schemaService)
         {
             _db = db;
             _mapper = mapper;
             _logger = logger;
+            _schemaService = schemaService;
         }
 
         [HttpPost]
@@ -38,16 +41,7 @@ namespace Polygon.API.Controllers
         public async Task<IActionResult> AddSchema(FormSchemaRequest request,
             CancellationToken cancellationToken)
         {
-            var formSchema = new FormSchema(DateTimeOffset.Now);
-            
-            _mapper.Map(request, formSchema);
-
-            await _db.FormSchemas.AddAsync(formSchema, cancellationToken);
-
-            await _db.SaveChangesAsync(cancellationToken);
-
-            var response = _mapper.Map<FormSchemaResponse>(formSchema);
-            
+            var response = await _schemaService.AddSchema(request, cancellationToken);
             return Created(Url.Action("GetSchema", new {response.Id}), response);
         }
 
@@ -57,23 +51,11 @@ namespace Polygon.API.Controllers
         public async Task<IActionResult> PatchSchema(int id, JsonPatchDocument<FormSchemaRequest> patchDocument,
             CancellationToken cancellationToken)
         {
-            var formSchema =
-                await _db.FormSchemas.FirstOrDefaultAsync(s => s.Id == id, cancellationToken);
-
-            if (formSchema is null)
-            {
-                return NotFound();
-            }
-            
-            var resource = _mapper.Map<FormSchemaRequest>(formSchema);
-
-            patchDocument.ApplyTo(resource);
-
-            _mapper.Map(resource, formSchema);
-
-            await _db.SaveChangesAsync(cancellationToken);
-
-            return NoContent();
+            var result = await _schemaService.PatchSchema(id, patchDocument, cancellationToken);
+            return result.Match<IActionResult>(
+                success => NoContent(),
+                notFound => NotFound()
+            );
         }
 
         [HttpDelete("{id:int}")]
@@ -81,21 +63,11 @@ namespace Polygon.API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteSchema(int id, CancellationToken cancellationToken)
         {
-            var resource =
-                await _db.FormSchemas.IgnoreQueryFilters().FirstOrDefaultAsync(s => s.Id == id, cancellationToken);
-
-            if (resource is null)
-            {
-                return NotFound();
-            }
-
-            if (!resource.IsDeleted)
-            {
-                resource.IsDeleted = true;
-                await _db.SaveChangesAsync(cancellationToken);
-            }
-            
-            return NoContent();
+            var result = await _schemaService.DeleteSchema(id, cancellationToken);
+            return result.Match<IActionResult>(
+                success => NoContent(),
+                notFound => NotFound()
+            );
         }
 
         [HttpGet]
@@ -103,7 +75,7 @@ namespace Polygon.API.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> GetSchemas()
         {
-            var response = await _mapper.ProjectTo<FormSchemaResponse>(_db.FormSchemas).ToListAsync();
+            var response = await _schemaService.GetSchemas();
             
             if (!response.Any())
             {
@@ -118,8 +90,7 @@ namespace Polygon.API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetSchema(int id)
         {
-            var response = await _mapper.ProjectTo<FormSchemaResponse>(_db.FormSchemas)
-                .FirstOrDefaultAsync(schema => schema.Id == id);
+            var response = await _schemaService.GetSchema(id);
 
             if (response is null)
             {

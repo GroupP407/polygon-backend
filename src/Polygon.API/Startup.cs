@@ -12,6 +12,8 @@ using Microsoft.OpenApi.Models;
 using OpenTelemetry;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
+using Polygon.API.Services.FormService;
+using Polygon.API.Services.SchemaService;
 using Polygon.Infrastructure;
 
 namespace Polygon.API
@@ -79,6 +81,8 @@ namespace Polygon.API
 
         public void ConfigureContainer(ContainerBuilder builder)
         {
+            builder.RegisterType<SchemaService>().As<ISchemaService>();
+            builder.RegisterType<FormService>().As<IFormService>();
         }
     }
 }
