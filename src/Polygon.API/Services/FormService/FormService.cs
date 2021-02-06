@@ -6,6 +6,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Nest;
 using OneOf;
 using OneOf.Types;
 using Polygon.API.Resources;
@@ -19,12 +20,14 @@ namespace Polygon.API.Services.FormService
         private readonly ApplicationContext _db;
         private readonly IMapper _mapper;
         private readonly ILogger<FormService> _logger;
+        private readonly IElasticClient _elasticClient;
 
-        public FormService(ApplicationContext db, IMapper mapper, ILogger<FormService> logger)
+        public FormService(ApplicationContext db, IMapper mapper, ILogger<FormService> logger, IElasticClient elasticClient)
         {
             _db = db;
             _mapper = mapper;
             _logger = logger;
+            _elasticClient = elasticClient;
         }
 
 
@@ -46,10 +49,14 @@ namespace Polygon.API.Services.FormService
             
             var formData = new FormData(DateTimeOffset.Now);
             
+            
+            
             _mapper.Map(request, formData);
             schema.FormDatas.Add(formData);
             await _db.SaveChangesAsync(cancellationToken);
-
+            var indexDocumentAsync = await _elasticClient.IndexDocumentAsync(formData, cancellationToken);
+            
+            
             var response = _mapper.Map<FormDataResponse>(formData);
             return response;
         }

@@ -1,3 +1,4 @@
+using System;
 using System.Reflection;
 using App.Metrics.Formatters.Prometheus;
 using Autofac;
@@ -9,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using Nest;
 using OpenTelemetry;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
@@ -53,6 +55,7 @@ namespace Polygon.API
             });
             services.AddAuthorization();
             services.AddMetrics();
+            services.AddElasticsearch(Configuration);
             services.AddMetricsEndpoints(options =>
             {
                 options.MetricsEndpointOutputFormatter = new MetricsPrometheusProtobufOutputFormatter();
