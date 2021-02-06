@@ -10,7 +10,7 @@ namespace Polygon.API.Services.FormService
 {
     public interface IFormService
     {
-        Task<FormDataResponse> AddFormData(FormDataRequest request, CancellationToken cancellationToken);
+        Task<FormDataResponse> AddFormData(FormDataRequest request, int schemaId, CancellationToken cancellationToken);
         Task<List<FormDataResponse>> GetFormDatas();
         Task<FormDataResponse?> GetFormData(int id);
     }

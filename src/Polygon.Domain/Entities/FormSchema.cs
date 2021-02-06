@@ -11,17 +11,20 @@ namespace Polygon.Domain.Entities
         public FormSchema(DateTimeOffset creationTimestamp)
         {
             CreationTimestamp = creationTimestamp;
-            FormDatas = new List<FormData>();
+        }
+
+        private FormSchema()
+        {
         }
 
         public int Id { get; }
         public DateTimeOffset CreationTimestamp { get; }
         public JObject Schema { get; set; }
         public bool IsDeleted { get; set; }
-        
-        public ICollection<FormData> FormDatas { get; set; }
-        
-        
-        
+
+        public ICollection<FormData> FormDatas { get; set; } = new List<FormData>();
+
+
+
     }
 }

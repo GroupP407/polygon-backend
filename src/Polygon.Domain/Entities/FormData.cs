@@ -10,9 +10,13 @@ namespace Polygon.Domain.Entities
             ImportedTimestamp = creationTimestamp;
         }
 
+        private FormData()
+        {
+        }
+
         public int Id { get; }
         public DateTimeOffset ImportedTimestamp { get; }
-        public JObject Data { get; set; }
+        public JObject JsonData { get; set; }
 
         public int FormSchemaId { get; set; }
         public FormSchema FormSchema { get; set; }

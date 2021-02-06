@@ -14,6 +14,7 @@ using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using Polygon.API.Services.FormService;
 using Polygon.API.Services.SchemaService;
+using Polygon.Domain.Entities;
 using Polygon.Infrastructure;
 
 namespace Polygon.API

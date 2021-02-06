@@ -12,7 +12,7 @@ using Polygon.Infrastructure;
 
 namespace Polygon.API.Controllers
 {
-    [Route("from")]
+    [Route("schema/{schemaId:int}/form")]
     [ApiController]
     public class FormController : ControllerBase
     {
@@ -33,31 +33,14 @@ namespace Polygon.API.Controllers
         }
         
         [HttpPost]
-        [ProducesResponseType(typeof(FormSchemaResponse), StatusCodes.Status201Created)]
-        public async Task<IActionResult> AddFormData(FormSchemaRequest request,
+        [ProducesResponseType(typeof(FormDataResponse), StatusCodes.Status201Created)]
+        public async Task<IActionResult> AddFormData(FormDataRequest request, int schemaId,
             CancellationToken cancellationToken)
         {
-            var response = await _schemaService.AddSchema(request, cancellationToken);
-            return Created(Url.Action("GetFormData", new {response.Id}), response);
-        }
-        
-        
-        [HttpGet("{id:int}")]
-        [ProducesResponseType(typeof(FormDataResponse), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetFormData(int id)
-        {
-            var response = await _formService.GetFormData(id);
-
-            if (response is null)
-            {
-                return NotFound();
-            }
-            
+            var response = await _formService.AddFormData(request, schemaId, cancellationToken);
             return Ok(response);
         }
-
-
+        
         [HttpGet]
         [ProducesResponseType(typeof(FormDataResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]

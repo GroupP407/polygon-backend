@@ -28,20 +28,32 @@ namespace Polygon.API.Services.FormService
         }
 
 
-        public async Task<FormDataResponse> AddFormData(FormDataRequest request, CancellationToken cancellationToken)
+        public async Task<FormDataResponse> AddFormData(FormDataRequest request, int schemaId, CancellationToken cancellationToken)
         {
+            var schema = await _db.FormSchemas.FirstOrDefaultAsync(s => s.Id == schemaId, cancellationToken: cancellationToken);
+            if (schema is null)
+            {
+                // TODO вернуть ошибку
+            }
+            
+            var fromJsonAsync = await NJsonSchema.JsonSchema.FromJsonAsync(schema.Schema.ToString(), cancellationToken);
+            var errors = fromJsonAsync.Validate(request.JsonData.ToString());
+
+            if (errors.Count > 0)
+            {
+                // TODO вернуть ошибки
+            }
+            
             var formData = new FormData(DateTimeOffset.Now);
             
             _mapper.Map(request, formData);
-
-            await _db.FormDatas.AddAsync(formData, cancellationToken);
-
+            schema.FormDatas.Add(formData);
             await _db.SaveChangesAsync(cancellationToken);
 
             var response = _mapper.Map<FormDataResponse>(formData);
             return response;
         }
-
+        
         public async Task<List<FormDataResponse>> GetFormDatas()
         {
             return await _mapper.ProjectTo<FormDataResponse>(_db.FormDatas).ToListAsync();
