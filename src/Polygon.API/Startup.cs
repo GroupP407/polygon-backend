@@ -14,6 +14,7 @@ using Nest;
 using OpenTelemetry;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
+using Polygon.API.Managers;
 using Polygon.API.Services.FormService;
 using Polygon.API.Services.SchemaService;
 using Polygon.Domain.Entities;
@@ -87,6 +88,8 @@ namespace Polygon.API
         {
             builder.RegisterType<SchemaService>().As<ISchemaService>();
             builder.RegisterType<FormService>().As<IFormService>();
+            builder.RegisterType<FormManager>().As<IFormManager>();
+            builder.RegisterType<SchemaManager>().As<ISchemaManager>();
         }
     }
 }

@@ -1,8 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
+using FluentValidation;
+using FluentValidation.Results;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -19,56 +22,28 @@ namespace Polygon.API.Services.FormService
     {
         private readonly ApplicationContext _db;
         private readonly IMapper _mapper;
-        private readonly ILogger<FormService> _logger;
-        private readonly IElasticClient _elasticClient;
 
-        public FormService(ApplicationContext db, IMapper mapper, ILogger<FormService> logger, IElasticClient elasticClient)
+        public FormService(ApplicationContext db, IMapper mapper)
         {
             _db = db;
             _mapper = mapper;
-            _logger = logger;
-            _elasticClient = elasticClient;
         }
 
-
-        public async Task<FormDataResponse> AddFormData(FormDataRequest request, int schemaId, CancellationToken cancellationToken)
+        public async Task ValidateFormDataRequest(FormDataRequest request, FormSchema schema, CancellationToken cancellationToken)
         {
-            var schema = await _db.FormSchemas.FirstOrDefaultAsync(s => s.Id == schemaId, cancellationToken: cancellationToken);
-            if (schema is null)
-            {
-                // TODO вернуть ошибку
-            }
-            
-            var fromJsonAsync = await NJsonSchema.JsonSchema.FromJsonAsync(schema.Schema.ToString(), cancellationToken);
-            var errors = fromJsonAsync.Validate(request.JsonData.ToString());
+            var draft = await NJsonSchema.JsonSchema.FromJsonAsync(schema.Schema.ToString(), cancellationToken);
+            var errors = draft.Validate(request.JsonData);
 
-            if (errors.Count > 0)
+            if (errors.Any())
             {
-                // TODO вернуть ошибки
+                throw new ValidationException(errors.Select(error =>
+                    new ValidationFailure(error.Path, error.Kind.ToString())));
             }
-            
-            var formData = new FormData(DateTimeOffset.Now);
-            
-            
-            
-            _mapper.Map(request, formData);
-            schema.FormDatas.Add(formData);
-            await _db.SaveChangesAsync(cancellationToken);
-            var indexDocumentAsync = await _elasticClient.IndexDocumentAsync(formData, cancellationToken);
-            
-            
-            var response = _mapper.Map<FormDataResponse>(formData);
-            return response;
         }
         
-        public async Task<List<FormDataResponse>> GetFormDatas()
+        public IQueryable<FormData> GetFormData(int schemaId)
         {
-            return await _mapper.ProjectTo<FormDataResponse>(_db.FormDatas).ToListAsync();
-        }
-
-        public async Task<FormDataResponse?> GetFormData(int id)
-        {
-            return await _mapper.ProjectTo<FormDataResponse>(_db.FormDatas).FirstOrDefaultAsync(response => response.Id == id);
+            return _db.FormData.Where(data => data.FormSchemaId == schemaId);
         }
     }
 }

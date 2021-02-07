@@ -1,10 +1,11 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Polygon.API.Managers;
 using Polygon.API.Resources;
 using Polygon.API.Services.FormService;
 using Polygon.API.Services.SchemaService;
@@ -16,46 +17,36 @@ namespace Polygon.API.Controllers
     [ApiController]
     public class FormController : ControllerBase
     {
-        private readonly ApplicationContext _db;
-        private readonly IMapper _mapper;
-        private readonly ILogger<FormController> _logger;
-        private readonly ISchemaService _schemaService;
-        private readonly IFormService _formService;
-        
+        private readonly IFormManager _formManager;
 
 
-        public FormController(ApplicationContext db, IMapper mapper, ILogger<FormController> logger, ISchemaService schemaService, IFormService formService)
+        public FormController(IFormManager formManager)
         {
-            _db = db;
-            _mapper = mapper;
-            _logger = logger;
-            _schemaService = schemaService;
-            _formService = formService;
+            _formManager = formManager;
         }
-        
+
         [HttpPost]
         [ProducesResponseType(typeof(FormDataResponse), StatusCodes.Status201Created)]
         public async Task<IActionResult> AddFormData(FormDataRequest request, int schemaId,
             CancellationToken cancellationToken)
         {
-            var response = await _formService.AddFormData(request, schemaId, cancellationToken);
-            return Ok(response);
+            var formData = await _formManager.AddFormData(request, schemaId, cancellationToken);
+            return Ok(formData);
         }
-        
+
         [HttpGet]
         [ProducesResponseType(typeof(FormDataResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<IActionResult> GetFormDatas()
+        public async Task<IActionResult> GetFormData(int schemaId, CancellationToken cancellationToken)
         {
-            var formDatas = await _formService.GetFormDatas();
+            var formData = await _formManager.GetFormData(schemaId, cancellationToken);
 
-            if (!formDatas.Any())
+            if (!formData.Any())
             {
                 return NoContent();
             }
 
-            return Ok(formDatas);
+            return Ok(formData);
         }
-        
     }
 }

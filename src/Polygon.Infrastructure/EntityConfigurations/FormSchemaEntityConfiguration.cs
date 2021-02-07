@@ -13,7 +13,6 @@ namespace Polygon.Infrastructure.EntityConfigurations
                 .HasColumnType("jsonb")
                 .HasJObjectConversion()
                 .IsRequired();
-            builder.HasQueryFilter(schema => !schema.IsDeleted);
         }
     }
 }

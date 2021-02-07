@@ -1,7 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 
 namespace Polygon.API.Resources
 {
-    public record FormSchemaResponse(int Id, JObject Schema, DateTimeOffset CreationTimestamp);
+    public class FormSchemaResponse
+    {
+        public int Id { get; set; }
+        public JObject Schema { get; set; }
+        public DateTimeOffset CreationTimestamp { get; set; }
+    }
 }

@@ -17,19 +17,19 @@ namespace Polygon.API
                 .DefaultIndex(defaultIndex);
 
             AddDefaultMappings(settings);
-  
+
             var client = new ElasticClient(settings);
 
             services.AddSingleton<IElasticClient>(client);
-  
+
             CreateIndex(client, defaultIndex);
         }
-  
+
         private static void AddDefaultMappings(ConnectionSettings settings)
         {
             settings.DefaultMappingFor<FormData>(descriptor => descriptor.Ignore(data => data.FormSchema));
         }
-  
+
         private static void CreateIndex(IElasticClient client, string indexName)
         {
             var createIndexResponse = client.Indices.Create(indexName,

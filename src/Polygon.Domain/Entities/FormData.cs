@@ -5,9 +5,12 @@ namespace Polygon.Domain.Entities
 {
     public class FormData
     {
-        public FormData(DateTimeOffset creationTimestamp)
+        public static FormData Create()
         {
-            ImportedTimestamp = creationTimestamp;
+            return new()
+            {
+                ImportedTimestamp = DateTimeOffset.UtcNow
+            };
         }
 
         private FormData()
@@ -15,7 +18,7 @@ namespace Polygon.Domain.Entities
         }
 
         public int Id { get; }
-        public DateTimeOffset ImportedTimestamp { get; }
+        public DateTimeOffset ImportedTimestamp { get; set; }
         public JObject JsonData { get; set; }
 
         public int FormSchemaId { get; set; }

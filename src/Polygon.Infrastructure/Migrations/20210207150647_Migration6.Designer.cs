@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Polygon.Infrastructure;
@@ -9,9 +10,10 @@ using Polygon.Infrastructure;
 namespace Polygon.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20210207150647_Migration6")]
+    partial class Migration6
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -68,7 +70,7 @@ namespace Polygon.Infrastructure.Migrations
             modelBuilder.Entity("Polygon.Domain.Entities.FormData", b =>
                 {
                     b.HasOne("Polygon.Domain.Entities.FormSchema", "FormSchema")
-                        .WithMany("FormData")
+                        .WithMany("FormDatas")
                         .HasForeignKey("FormSchemaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -78,7 +80,7 @@ namespace Polygon.Infrastructure.Migrations
 
             modelBuilder.Entity("Polygon.Domain.Entities.FormSchema", b =>
                 {
-                    b.Navigation("FormData");
+                    b.Navigation("FormDatas");
                 });
 #pragma warning restore 612, 618
         }

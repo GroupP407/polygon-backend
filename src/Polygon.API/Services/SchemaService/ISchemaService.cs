@@ -1,24 +1,25 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.JsonPatch;
 using OneOf;
 using OneOf.Types;
 using Polygon.API.Resources;
+using Polygon.Domain.Entities;
 
 namespace Polygon.API.Services.SchemaService
 {
     public interface ISchemaService
     {
-        Task<FormSchemaResponse> AddSchema(FormSchemaRequest request, CancellationToken cancellationToken);
-        Task<OneOf<Success, NotFound>> PatchSchema(int id, JsonPatchDocument<FormSchemaRequest> patchDocument,
-            CancellationToken cancellationToken);
+        Task AddSchema(FormSchema request, CancellationToken cancellationToken);
+        Task UpdateSchema(FormSchema formSchema,
+            CancellationToken cancellationToken = default);
 
-        Task<OneOf<Success, NotFound>> DeleteSchema(int id, CancellationToken cancellationToken);
+        Task DeleteSchema(FormSchema formSchema, CancellationToken cancellationToken);
 
-        Task<List<FormSchemaResponse>> GetSchemas();
+        IQueryable<FormSchema> GetSchemas(bool includeDeleted = default);
 
-        Task<FormSchemaResponse?> GetSchema(int id);
-
+        Task<FormSchema> GetSchema(int id, bool includeDeleted = default, CancellationToken cancellationToken = default);
     }
 }

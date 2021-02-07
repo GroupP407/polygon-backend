@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 using NJsonSchema;
+using Polygon.API.Managers;
 using Polygon.API.Resources;
-using Polygon.API.Services.SchemaService;
 using Polygon.Domain.Entities;
 using Polygon.Infrastructure;
 
@@ -23,17 +23,11 @@ namespace Polygon.API.Controllers
     [ApiController]
     public class SchemaController : ControllerBase
     {
-        private readonly ApplicationContext _db;
-        private readonly IMapper _mapper;
-        private readonly ILogger<SchemaController> _logger;
-        private readonly ISchemaService _schemaService;
+        private readonly ISchemaManager _schemaManager;
 
-        public SchemaController(ApplicationContext db, IMapper mapper, ILogger<SchemaController> logger, ISchemaService schemaService)
+        public SchemaController(ISchemaManager schemaManager)
         {
-            _db = db;
-            _mapper = mapper;
-            _logger = logger;
-            _schemaService = schemaService;
+            _schemaManager = schemaManager;
         }
 
         [HttpPost]
@@ -41,41 +35,35 @@ namespace Polygon.API.Controllers
         public async Task<IActionResult> AddSchema(FormSchemaRequest request,
             CancellationToken cancellationToken)
         {
-            var response = await _schemaService.AddSchema(request, cancellationToken);
-            return Created(Url.Action("GetSchema", new {response.Id}), response);
+            var response = await _schemaManager.AddSchema(request, cancellationToken);
+            return Created(Url.Action("GetSchema", new {schemaId = response.Id}), response);
         }
 
-        [HttpPatch("{id:int}")]
+        [HttpPatch("{schemaId:int}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> PatchSchema(int id, JsonPatchDocument<FormSchemaRequest> patchDocument,
+        public async Task<IActionResult> PatchSchema(int schemaId, JsonPatchDocument<FormSchemaRequest> patchDocument,
             CancellationToken cancellationToken)
         {
-            var result = await _schemaService.PatchSchema(id, patchDocument, cancellationToken);
-            return result.Match<IActionResult>(
-                success => NoContent(),
-                notFound => NotFound()
-            );
+            await _schemaManager.PatchSchema(schemaId, patchDocument, cancellationToken);
+            return NoContent();
         }
 
-        [HttpDelete("{id:int}")]
+        [HttpDelete("{schemaId:int}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> DeleteSchema(int id, CancellationToken cancellationToken)
+        public async Task<IActionResult> DeleteSchema(int schemaId, CancellationToken cancellationToken)
         {
-            var result = await _schemaService.DeleteSchema(id, cancellationToken);
-            return result.Match<IActionResult>(
-                success => NoContent(),
-                notFound => NotFound()
-            );
+            await _schemaManager.DeleteSchema(schemaId, cancellationToken);
+            return NoContent();
         }
 
         [HttpGet]
         [ProducesResponseType(typeof(FormSchemaResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<IActionResult> GetSchemas()
+        public async Task<IActionResult> GetSchemas(CancellationToken cancellationToken)
         {
-            var response = await _schemaService.GetSchemas();
+            var response = await _schemaManager.GetSchemas(cancellationToken);
             
             if (!response.Any())
             {
@@ -85,18 +73,13 @@ namespace Polygon.API.Controllers
             return Ok(response);
         }
 
-        [HttpGet("{id:int}")]
+        [HttpGet("{schemaId:int}")]
         [ProducesResponseType(typeof(FormSchemaResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetSchema(int id)
+        public async Task<IActionResult> GetSchema(int schemaId, CancellationToken cancellationToken)
         {
-            var response = await _schemaService.GetSchema(id);
+            var response = await _schemaManager.GetSchema(schemaId, cancellationToken);
 
-            if (response is null)
-            {
-                return NotFound();
-            }
-            
             return Ok(response);
         }
     }
